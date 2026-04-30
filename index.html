@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lifemax — Optimize Everything</title>
+<meta name="description" content="The competitive self-improvement platform. Track your progress, get honest feedback, and become the best version of yourself.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Instrument+Serif:ital@0;1&family=DM+Mono:wght@400;500&family=Barlow:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --black: #080809;
+  --gold: #c8a951;
+  --gold-dim: rgba(200,169,81,0.15);
+  --gold-border: rgba(200,169,81,0.25);
+  --white: #f0ece3;
+  --muted: rgba(240,236,227,0.45);
+  --card: rgba(255,255,255,0.03);
+  --card-border: rgba(255,255,255,0.07);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--black);
+  color: var(--white);
+  font-family: 'Barlow', sans-serif;
+  overflow-x: hidden;
+  cursor: default;
+}
+
+/* ── GRAIN OVERLAY ─────────────────────────────── */
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.045'/%3E%3C/svg%3E");
+  opacity: 1;
+}
+
+/* ── NAV ────────────────────────────────────────── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  padding: 1.2rem 2.5rem;
+  display: flex; align-items: center; justify-content: space-between;
+  background: linear-gradient(to bottom, rgba(8,8,9,0.95), transparent);
+  backdrop-filter: blur(0px);
+}
+.nav-logo {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.8rem; letter-spacing: 0.12em;
+  color: var(--gold);
+  text-decoration: none;
+}
+.nav-cta {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.62rem; letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--black); background: var(--gold);
+  padding: 0.5rem 1.2rem; border: none; cursor: pointer;
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+.nav-cta:hover { opacity: 0.85; }
+
+/* ── HERO ───────────────────────────────────────── */
+.hero {
+  min-height: 100vh;
+  display: flex; flex-direction: column; justify-content: center;
+  padding: 8rem 2.5rem 5rem;
+  position: relative; overflow: hidden;
+}
+
+/* animated grid */
+.hero-grid {
+  position: absolute; inset: 0; z-index: 0;
+  background-image:
+    linear-gradient(rgba(200,169,81,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(200,169,81,0.04) 1px, transparent 1px);
+  background-size: 80px 80px;
+  animation: gridDrift 20s linear infinite;
+}
+@keyframes gridDrift {
+  from { background-position: 0 0; }
+  to   { background-position: 80px 80px; }
+}
+
+/* radial glow */
+.hero-glow {
+  position: absolute; top: -20%; left: 50%; transform: translateX(-50%);
+  width: 900px; height: 900px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(200,169,81,0.08) 0%, transparent 65%);
+  pointer-events: none; z-index: 0;
+}
+
+.hero-inner {
+  position: relative; z-index: 1;
+  max-width: 1100px; margin: 0 auto; width: 100%;
+}
+
+.hero-eyebrow {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.65rem; letter-spacing: 0.3em; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 1.5rem;
+  opacity: 0; animation: fadeUp 0.8s 0.1s forwards;
+  display: flex; align-items: center; gap: 0.8rem;
+}
+.hero-eyebrow::before {
+  content: '';
+  display: inline-block; width: 30px; height: 1px; background: var(--gold);
+}
+
+.hero-headline {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(5.5rem, 14vw, 13rem);
+  line-height: 0.88; letter-spacing: 0.01em;
+  color: var(--white);
+  opacity: 0; animation: fadeUp 0.9s 0.25s forwards;
+}
+.hero-headline em {
+  font-style: normal; color: var(--gold);
+  -webkit-text-stroke: 0px;
+}
+
+.hero-sub {
+  font-family: 'Instrument Serif', serif;
+  font-style: italic;
+  font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+  color: var(--muted); line-height: 1.6;
+  max-width: 520px; margin-top: 2rem;
+  opacity: 0; animation: fadeUp 0.9s 0.4s forwards;
+}
+
+.hero-bottom {
+  display: flex; align-items: flex-end; justify-content: space-between;
+  margin-top: 4rem; flex-wrap: wrap; gap: 2rem;
+  opacity: 0; animation: fadeUp 0.9s 0.55s forwards;
+}
+
+.hero-stats {
+  display: flex; gap: 3rem; flex-wrap: wrap;
+}
+.hero-stat {}
+.hero-stat-n {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2.8rem; color: var(--gold); line-height: 1;
+}
+.hero-stat-l {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.58rem; color: var(--muted);
+  letter-spacing: 0.15em; text-transform: uppercase; margin-top: 0.2rem;
+}
+
+.scroll-hint {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.58rem; color: rgba(240,236,227,0.2);
+  letter-spacing: 0.2em; text-transform: uppercase;
+  writing-mode: vertical-rl;
+  animation: pulse 2.5s ease-in-out infinite;
+}
+@keyframes pulse { 0%,100%{opacity:0.2} 50%{opacity:0.6} }
+
+/* ── SCORE VISUAL ───────────────────────────────── */
+.score-band {
+  padding: 0 2.5rem;
+  position: relative; z-index: 1;
+  margin-bottom: 0;
+}
+.score-band-inner {
+  max-width: 1100px; margin: 0 auto;
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 1px; background: var(--card-border);
+  border: 1px solid var(--card-border);
+}
+.score-panel {
+  background: var(--black);
+  padding: 3rem;
+}
+.score-panel-left {
+  border-right: 1px solid var(--card-border);
+}
+.score-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.6rem; letter-spacing: 0.25em; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 1.5rem;
+}
+.score-display {
+  display: flex; align-items: center; gap: 2rem;
+}
+.score-ring-wrap { position: relative; flex-shrink: 0; }
+.score-info {}
+.score-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 4rem; color: var(--white); line-height: 1;
+}
+.score-rank {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  background: var(--gold-dim); border: 1px solid var(--gold-border);
+  padding: 0.25rem 0.7rem; margin-top: 0.5rem;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.6rem; letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--gold);
+}
+.score-delta {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.65rem; color: #4caf7d;
+  margin-top: 0.6rem; letter-spacing: 0.1em;
+}
+
+/* sub-score bars */
+.sub-scores { display: flex; flex-direction: column; gap: 0.9rem; }
+.sub-row { display: flex; align-items: center; gap: 1rem; }
+.sub-name {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--muted); width: 80px; flex-shrink: 0;
+}
+.sub-bar { flex: 1; height: 3px; background: rgba(255,255,255,0.06); border-radius: 2px; overflow: hidden; }
+.sub-fill { height: 100%; border-radius: 2px; background: var(--gold); transition: width 1.5s cubic-bezier(0.16,1,0.3,1); }
+.sub-val {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1rem; color: var(--white); width: 28px; text-align: right;
+}
+
+/* SVG ring */
+.ring-svg { transform: rotate(-90deg); }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── SECTION BASE ───────────────────────────────── */
+section { padding: 7rem 2.5rem; position: relative; z-index: 1; }
+.section-inner { max-width: 1100px; margin: 0 auto; }
+
+.s-eyebrow {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.6rem; letter-spacing: 0.25em; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 1rem;
+  display: flex; align-items: center; gap: 0.8rem;
+}
+.s-eyebrow::before {
+  content: ''; display: inline-block;
+  width: 20px; height: 1px; background: var(--gold);
+}
+.s-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(3rem, 6vw, 5.5rem);
+  line-height: 0.95; letter-spacing: 0.02em; color: var(--white);
+  margin-bottom: 1.5rem;
+}
+.s-desc {
+  font-family: 'Instrument Serif', serif; font-style: italic;
+  font-size: 1.15rem; color: var(--muted); max-width: 520px; line-height: 1.7;
+}
+
+/* ── HOW IT WORKS ───────────────────────────────── */
+.steps {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1px; background: var(--card-border);
+  border: 1px solid var(--card-border);
+  margin-top: 4rem;
+}
+.step {
+  background: var(--black);
+  padding: 2.5rem 2rem;
+  position: relative; overflow: hidden;
+  transition: background 0.3s;
+}
+.step:hover { background: rgba(200,169,81,0.04); }
+.step-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 5rem; line-height: 1;
+  color: var(--gold); opacity: 0.12;
+  position: absolute; top: 1rem; right: 1.5rem;
+}
+.step-icon { font-size: 1.8rem; margin-bottom: 1.2rem; display: block; }
+.step-title {
+  font-family: 'Barlow', sans-serif;
+  font-weight: 800; font-size: 1.1rem; color: var(--white);
+  margin-bottom: 0.6rem; text-transform: uppercase; letter-spacing: 0.03em;
+}
+.step-desc { font-size: 0.85rem; color: var(--muted); line-height: 1.7; }
+
+/* ── FEATURES ───────────────────────────────────── */
+.features-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1px; background: var(--card-border);
+  border: 1px solid var(--card-border);
+  margin-top: 4rem;
+}
+.feature {
+  background: var(--black); padding: 2.5rem;
+  border-top: 2px solid transparent;
+  transition: all 0.3s;
+}
+.feature:hover { background: rgba(200,169,81,0.03); border-top-color: var(--gold); }
+.feature-tag {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.55rem; letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 1rem;
+  background: var(--gold-dim); border: 1px solid var(--gold-border);
+  padding: 0.2rem 0.6rem; display: inline-block;
+}
+.feature-title {
+  font-family: 'Barlow', sans-serif; font-weight: 800;
+  font-size: 1.15rem; color: var(--white);
+  text-transform: uppercase; letter-spacing: 0.02em; margin-bottom: 0.7rem;
+}
+.feature-desc { font-size: 0.85rem; color: var(--muted); line-height: 1.75; }
+
+/* ── WAITLIST SECTION ───────────────────────────── */
+.waitlist-section {
+  padding: 7rem 2.5rem;
+  background: linear-gradient(180deg, var(--black) 0%, #0c0b07 100%);
+  position: relative; overflow: hidden;
+}
+.waitlist-glow {
+  position: absolute; bottom: -30%; left: 50%; transform: translateX(-50%);
+  width: 800px; height: 600px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(200,169,81,0.07) 0%, transparent 65%);
+  pointer-events: none;
+}
+.waitlist-inner {
+  max-width: 700px; margin: 0 auto; text-align: center;
+  position: relative; z-index: 1;
+}
+.waitlist-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(3.5rem, 9vw, 7rem);
+  line-height: 0.9; color: var(--white); margin-bottom: 1.2rem;
+}
+.waitlist-title span { color: var(--gold); }
+.waitlist-desc {
+  font-family: 'Instrument Serif', serif; font-style: italic;
+  font-size: 1.15rem; color: var(--muted);
+  line-height: 1.7; margin-bottom: 3rem;
+}
+
+/* Beehiiv embed wrapper */
+.beehiiv-wrapper {
+  background: rgba(255,255,255,0.02);
+  border: 1px solid var(--card-border);
+  padding: 2.5rem;
+  position: relative;
+}
+.beehiiv-wrapper::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+
+/* Override beehiiv iframe styles */
+.beehiiv-embed {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+.waitlist-note {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.6rem; letter-spacing: 0.15em; text-transform: uppercase;
+  color: rgba(240,236,227,0.2); margin-top: 1.5rem;
+}
+
+/* ── SOCIAL PROOF ───────────────────────────────── */
+.proof-strip {
+  border-top: 1px solid var(--card-border);
+  border-bottom: 1px solid var(--card-border);
+  padding: 3rem 2.5rem;
+  display: flex; align-items: center; justify-content: center;
+  flex-wrap: wrap; gap: 4rem;
+  position: relative; z-index: 1;
+}
+.proof-item { text-align: center; }
+.proof-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 3rem; color: var(--gold); line-height: 1;
+}
+.proof-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.58rem; color: var(--muted);
+  letter-spacing: 0.15em; text-transform: uppercase; margin-top: 0.3rem;
+}
+
+/* ── MANIFESTO ──────────────────────────────────── */
+.manifesto {
+  padding: 7rem 2.5rem;
+  border-top: 1px solid var(--card-border);
+  position: relative; z-index: 1;
+}
+.manifesto-inner { max-width: 800px; margin: 0 auto; }
+.manifesto-text {
+  font-family: 'Instrument Serif', serif;
+  font-size: clamp(1.4rem, 3vw, 2.1rem);
+  line-height: 1.55; color: var(--white);
+}
+.manifesto-text em { font-style: italic; color: var(--gold); }
+.manifesto-text strong { font-style: normal; font-weight: 400; color: var(--muted); }
+
+/* ── FOOTER ─────────────────────────────────────── */
+footer {
+  border-top: 1px solid var(--card-border);
+  padding: 2.5rem 2.5rem;
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 1rem;
+  position: relative; z-index: 1;
+}
+.footer-logo {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.4rem; letter-spacing: 0.12em; color: var(--gold);
+}
+.footer-copy {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.58rem; color: rgba(240,236,227,0.2);
+  letter-spacing: 0.12em; text-transform: uppercase;
+}
+
+/* ── SCROLL REVEAL ──────────────────────────────── */
+.reveal {
+  opacity: 0; transform: translateY(24px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+.reveal.visible { opacity: 1; transform: none; }
+
+/* ── RESPONSIVE ─────────────────────────────────── */
+@media (max-width: 768px) {
+  nav { padding: 1rem 1.5rem; }
+  .hero { padding: 7rem 1.5rem 4rem; }
+  .hero-headline { font-size: clamp(4rem, 18vw, 6rem); }
+  section { padding: 5rem 1.5rem; }
+  .score-band { padding: 0 1.5rem; }
+  .score-band-inner { grid-template-columns: 1fr; }
+  .score-panel-left { border-right: none; border-bottom: 1px solid var(--card-border); }
+  .waitlist-section { padding: 5rem 1.5rem; }
+  .beehiiv-wrapper { padding: 1.5rem; }
+  footer { padding: 2rem 1.5rem; }
+  .proof-strip { gap: 2.5rem; padding: 2.5rem 1.5rem; }
+  .hero-bottom { flex-direction: column; align-items: flex-start; }
+  .scroll-hint { display: none; }
+  .manifesto { padding: 5rem 1.5rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="#">LIFEMAX</a>
+  <a class="nav-cta" href="#waitlist">Join Waitlist</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-inner">
+    <div class="hero-eyebrow">Self-improvement, upgraded</div>
+    <h1 class="hero-headline">BECOME<br><em>ELITE.</em></h1>
+    <p class="hero-sub">The first platform that scores your appearance, fitness, style, and discipline — then builds you a plan to dominate every dimension.</p>
+    <div class="hero-bottom">
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <div class="hero-stat-n">1000</div>
+          <div class="hero-stat-l">Max APEX Score</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-n">6</div>
+          <div class="hero-stat-l">Life Dimensions</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-n">AI</div>
+          <div class="hero-stat-l">Personalized Plans</div>
+        </div>
+      </div>
+      <div class="scroll-hint">Scroll to explore</div>
+    </div>
+  </div>
+</section>
+
+<!-- SCORE PREVIEW BAND -->
+<div class="score-band reveal">
+  <div class="score-band-inner">
+    <!-- Left: Score ring -->
+    <div class="score-panel score-panel-left">
+      <div class="score-label">Your APEX Score</div>
+      <div class="score-display">
+        <div class="score-ring-wrap">
+          <svg class="ring-svg" width="110" height="110" viewBox="0 0 110 110">
+            <circle cx="55" cy="55" r="46" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="7"/>
+            <circle cx="55" cy="55" r="46" fill="none" stroke="#c8a951" stroke-width="7"
+              stroke-dasharray="289.03"
+              stroke-dashoffset="289.03"
+              stroke-linecap="round"
+              id="scoreCircle"/>
+          </svg>
+          <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+            <span style="font-family:'Bebas Neue',sans-serif;font-size:2rem;color:var(--gold);line-height:1;" id="scoreNum">0</span>
+            <span style="font-family:'DM Mono',monospace;font-size:0.5rem;color:var(--muted);letter-spacing:0.15em;text-transform:uppercase;">Score</span>
+          </div>
+        </div>
+        <div class="score-info">
+          <div class="score-num">734</div>
+          <div class="score-rank">🏆 Gold Rank</div>
+          <div class="score-delta">↑ +12 this month</div>
+        </div>
+      </div>
+    </div>
+    <!-- Right: Sub scores -->
+    <div class="score-panel">
+      <div class="score-label">Score Breakdown</div>
+      <div class="sub-scores">
+        <div class="sub-row">
+          <div class="sub-name">Physical</div>
+          <div class="sub-bar"><div class="sub-fill" style="width:0%" data-w="78%"></div></div>
+          <div class="sub-val">78</div>
+        </div>
+        <div class="sub-row">
+          <div class="sub-name">Fitness</div>
+          <div class="sub-bar"><div class="sub-fill" style="width:0%" data-w="82%"></div></div>
+          <div class="sub-val">82</div>
+        </div>
+        <div class="sub-row">
+          <div class="sub-name">Grooming</div>
+          <div class="sub-bar"><div class="sub-fill" style="width:0%" data-w="71%"></div></div>
+          <div class="sub-val">71</div>
+        </div>
+        <div class="sub-row">
+          <div class="sub-name">Style</div>
+          <div class="sub-bar"><div class="sub-fill" style="width:0%" data-w="65%"></div></div>
+          <div class="sub-val">65</div>
+        </div>
+        <div class="sub-row">
+          <div class="sub-name">Social</div>
+          <div class="sub-bar"><div class="sub-fill" style="width:0%" data-w="58%"></div></div>
+          <div class="sub-val">58</div>
+        </div>
+        <div class="sub-row">
+          <div class="sub-name">Discipline</div>
+          <div class="sub-bar"><div class="sub-fill" style="width:0%" data-w="84%"></div></div>
+          <div class="sub-val">84</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<section id="how">
+  <div class="section-inner">
+    <div class="s-eyebrow reveal">How it works</div>
+    <h2 class="s-title reveal">THREE STEPS.<br>TOTAL CLARITY.</h2>
+    <p class="s-desc reveal">No vague advice. No generic programs. A data-driven system built around your actual numbers.</p>
+
+    <div class="steps reveal">
+      <div class="step">
+        <div class="step-num">1</div>
+        <span class="step-icon">📊</span>
+        <div class="step-title">Get Your Score</div>
+        <div class="step-desc">Upload photos and answer a short assessment. Our AI and community instantly generate your APEX Score across 6 life dimensions. Honest. Objective. Actionable.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <span class="step-icon">🎯</span>
+        <div class="step-title">Get Your Plan</div>
+        <div class="step-desc">Your AI coach identifies your weakest dimensions and builds a personalized 30-day protocol. Specific routines, products, habits — no filler, no fluff.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <span class="step-icon">📈</span>
+        <div class="step-title">Track Your Arc</div>
+        <div class="step-desc">Log daily tasks, build streaks, earn rank. Watch your score rise week by week. Compete on leaderboards. Document your transformation. Become someone different.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <span class="step-icon">⚔️</span>
+        <div class="step-title">Compete & Win</div>
+        <div class="step-desc">Join Squads, enter 30-day challenges, and duel other members. The leaderboard rewards the disciplined — not just the genetically gifted. Progress beats potential.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features" style="padding-top:0;">
+  <div class="section-inner">
+    <div class="s-eyebrow reveal">Platform features</div>
+    <h2 class="s-title reveal">EVERYTHING<br>YOU NEED.</h2>
+
+    <div class="features-grid reveal">
+      <div class="feature">
+        <div class="feature-tag">Scoring</div>
+        <div class="feature-title">The APEX Score</div>
+        <div class="feature-desc">A composite 0–1000 score built from 6 weighted dimensions. Updated after every rating session and weekly habit completion. Your single number that captures everything.</div>
+      </div>
+      <div class="feature">
+        <div class="feature-tag">Feedback</div>
+        <div class="feature-title">Structured Ratings</div>
+        <div class="feature-desc">Submit photos for honest, rubric-based feedback from 7 verified community members. No toxic comment sections. Just scores, notes, and improvement directions.</div>
+      </div>
+      <div class="feature">
+        <div class="feature-tag">AI</div>
+        <div class="feature-title">Personalized Plans</div>
+        <div class="feature-desc">Your AI coach analyzes your weakest dimensions and generates a targeted 30-day protocol — skincare routines, workout adjustments, style upgrades, social challenges.</div>
+      </div>
+      <div class="feature">
+        <div class="feature-tag">Habits</div>
+        <div class="feature-title">Daily Quest System</div>
+        <div class="feature-desc">5 daily tasks auto-generated from your lowest scores. Log your gym session, grooming routine, posture check. Build streaks. Earn APEX Points. Never drift again.</div>
+      </div>
+      <div class="feature">
+        <div class="feature-tag">Community</div>
+        <div class="feature-title">Squads & Challenges</div>
+        <div class="feature-desc">Join Fitness, Grooming, Style, and Social squads. Enter 30-day challenges. Challenge specific users to improvement duels. The competitive pressure is the point.</div>
+      </div>
+      <div class="feature">
+        <div class="feature-tag">Progress</div>
+        <div class="feature-title">Transformation Logs</div>
+        <div class="feature-desc">Monthly side-by-side comparison photos. Score trajectory charts. Shareable Arc Cards showing your journey. The visual proof that the work is working.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROOF STRIP -->
+<div class="proof-strip reveal">
+  <div class="proof-item">
+    <div class="proof-num">1000</div>
+    <div class="proof-label">Max APEX Score</div>
+  </div>
+  <div class="proof-item">
+    <div class="proof-num">6</div>
+    <div class="proof-label">Life Dimensions</div>
+  </div>
+  <div class="proof-item">
+    <div class="proof-num">30</div>
+    <div class="proof-label">Day AI Protocols</div>
+  </div>
+  <div class="proof-item">
+    <div class="proof-num">7</div>
+    <div class="proof-label">Raters Per Session</div>
+  </div>
+  <div class="proof-item">
+    <div class="proof-num">∞</div>
+    <div class="proof-label">Excuses Eliminated</div>
+  </div>
+</div>
+
+<!-- MANIFESTO -->
+<div class="manifesto reveal">
+  <div class="manifesto-inner">
+    <p class="manifesto-text">
+      Most men spend years in the gym, buying better clothes, watching self-improvement content —
+      <strong>and still feel stuck.</strong> Not because they lack effort. Because they lack
+      <em>a system.</em> Lifemax gives you the score, the plan, and the community
+      that turns effort into visible, measurable transformation.
+      <em>This is not a forum. This is not an app. This is your arc.</em>
+    </p>
+  </div>
+</div>
+
+<!-- WAITLIST -->
+<div class="waitlist-section" id="waitlist">
+  <div class="waitlist-glow"></div>
+  <div class="waitlist-inner">
+    <div class="s-eyebrow reveal" style="justify-content:center;">Early Access</div>
+    <h2 class="waitlist-title reveal">JOIN THE<br><span>WAITLIST.</span></h2>
+    <p class="waitlist-desc reveal">Be first in when we launch. Early members get 3 months of Pro free and founding member status — permanently on your profile.</p>
+
+    <div class="beehiiv-wrapper reveal">
+      <script async src="https://subscribe-forms.beehiiv.com/embed.js"></script>
+      <iframe
+        src="https://subscribe-forms.beehiiv.com/39b134a4-f7c0-4088-a019-6c902aca9e74"
+        class="beehiiv-embed"
+        data-test-id="beehiiv-embed"
+        frameborder="0"
+        scrolling="no"
+        style="width:100%;height:320px;margin:0;border-radius:0;background-color:transparent;box-shadow:none;max-width:100%;">
+      </iframe>
+    </div>
+
+    <div class="waitlist-note reveal">No spam. No fluff. Just a launch notification when we're ready.</div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">LIFEMAX</div>
+  <div class="footer-copy">© 2025 Lifemax · All rights reserved</div>
+</footer>
+
+<script>
+// ── SCROLL REVEAL ─────────────────────────────────
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      // animate sub-score bars when score band becomes visible
+      if (e.target.classList.contains('score-band')) {
+        animateScoreBars();
+        animateScoreRing(734, 1000);
+      }
+    }
+  });
+}, { threshold: 0.12 });
+
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// ── SCORE RING ANIMATION ──────────────────────────
+function animateScoreRing(score, max) {
+  const circle = document.getElementById('scoreCircle');
+  const numEl  = document.getElementById('scoreNum');
+  if (!circle || !numEl) return;
+
+  const r = 46;
+  const circ = 2 * Math.PI * r; // ~289.03
+  const target = circ - (score / max) * circ;
+
+  // Count up number
+  let current = 0;
+  const step = score / 60;
+  const counter = setInterval(() => {
+    current = Math.min(current + step, score);
+    numEl.textContent = Math.round(current);
+    if (current >= score) clearInterval(counter);
+  }, 16);
+
+  // Animate dash
+  circle.style.transition = 'stroke-dashoffset 1.4s cubic-bezier(0.16,1,0.3,1)';
+  circle.style.strokeDashoffset = target;
+}
+
+// ── SUB-SCORE BARS ────────────────────────────────
+function animateScoreBars() {
+  document.querySelectorAll('.sub-fill').forEach((bar, i) => {
+    const w = bar.getAttribute('data-w');
+    setTimeout(() => { bar.style.width = w; }, i * 80);
+  });
+}
+
+// ── NAV SCROLL EFFECT ─────────────────────────────
+window.addEventListener('scroll', () => {
+  const nav = document.querySelector('nav');
+  if (window.scrollY > 60) {
+    nav.style.background = 'rgba(8,8,9,0.97)';
+    nav.style.backdropFilter = 'blur(12px)';
+    nav.style.borderBottom = '1px solid rgba(255,255,255,0.06)';
+  } else {
+    nav.style.background = 'linear-gradient(to bottom, rgba(8,8,9,0.95), transparent)';
+    nav.style.backdropFilter = 'blur(0px)';
+    nav.style.borderBottom = 'none';
+  }
+});
+</script>
+</body>
+</html>
